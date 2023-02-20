@@ -1,23 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import Home from "./components/Home";
+import Navbar from "./components/Navbar";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (!user) {
+      setUser(JSON.parse(localStorage.getItem("user")));
+    }
+  }, [user]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>JWT Front</h1>
+      <Navbar user={user} setUser={setUser} />
+      <Routes>
+        <Route
+          path="/"
+          element={user ? <Home user={user} /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/login"
+          element={!user ? <Login setUser={setUser} /> : <Navigate to="/" />}
+        />
+        <Route
+          to="/signup"
+          element={!user ? <Signup setUser={setUser} /> : <Navigate to="/" />}
+        />
+      </Routes>
     </div>
   );
 }
